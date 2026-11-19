@@ -1,0 +1,2 @@
+import {seedState,snapshot,type DemoState} from './data';
+export function hydrateDemo(value:Partial<DemoState>):DemoState{const state={...seedState,...value,branding:{...seedState.branding,...value.branding},inbox:value.inbox||[],engagement:{...seedState.engagement,...value.engagement,config:{...seedState.engagement.config,...value.engagement?.config}},business:{...seedState.business,...value.business,instagram:'https://www.instagram.com/oblaka_nails_yvr/'}};state.appointments=state.appointments.map(a=>a.quotedLegs?a:snapshot(a,state));return state;}

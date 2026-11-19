@@ -1,0 +1,3 @@
+import type {Credentials} from './data';
+export async function hashPin(pin:string,salt:string){const material=await crypto.subtle.importKey('raw',new TextEncoder().encode(pin),'PBKDF2',false,['deriveBits']);const bits=await crypto.subtle.deriveBits({name:'PBKDF2',salt:new TextEncoder().encode(salt),iterations:100000,hash:'SHA-256'},material,256);return Array.from(new Uint8Array(bits)).map(n=>n.toString(16).padStart(2,'0')).join('');}
+export async function credentials(client:number,pin:string):Promise<Credentials>{const salt=crypto.randomUUID();return {client,salt,hash:await hashPin(pin,salt)};}

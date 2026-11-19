@@ -1,0 +1,67 @@
+# Dependencies and generated output
+node_modules/
+.next/
+out/
+dist/
+coverage/
+*.tsbuildinfo
+.wrangler/
+.vercel/
+
+# Environment values and local credentials
+.env
+.env.*
+!.env.example
+!.env.*.example
+.dev.vars
+.dev.vars.*
+.npmrc
+.pnpmrc
+.aws/
+.ssh/
+.secrets/
+secrets/
+credentials/
+*credentials*.json
+*service-account*.json
+*service_account*.json
+*secret*.json
+*.pem
+*.key
+*.p12
+*.pfx
+*.keystore
+*.jks
+id_rsa*
+id_ed25519*
+
+# Private client exports, imports and local databases
+*.xls
+*.xlsx
+*.xlsm
+*.xlsb
+*.ods
+*.csv
+*.tsv
+*.sqlite
+*.sqlite3
+*.db
+client-data/
+private-data/
+imports/
+exports/
+backups/
+# Also ignore uppercase spreadsheet extensions
+*.[xX][lL][sS]
+*.[xX][lL][sS][xX]
+*.[cC][sS][vV]
+
+# Local archives, logs and OS/editor state
+*.zip
+*.tar
+*.gz
+*.log
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

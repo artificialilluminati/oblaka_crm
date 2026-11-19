@@ -1,0 +1,11 @@
+import {test} from 'node:test';import assert from 'node:assert/strict';
+import {seedState,initialAppointments,type DemoState} from '../lib/data';
+import {settle,refundPayment} from '../lib/finance';
+const a={...initialAppointments[0],id:'pay',giftCode:'OB-DEMO-2026'};
+const state:DemoState={...seedState,appointments:[a]};
+test('gift redemption and payment are recorded together; repeat payment cannot consume twice',()=>{const paid=settle(state,a,'gift-demo');assert.equal(paid.gifts[0].remaining,50);assert.equal(paid.appointments[0].giftApplied,50);assert.equal(paid.appointments[0].paid,true);assert.equal(settle(paid,a,'gift-demo'),paid);assert.equal(state.gifts[0].remaining,100);});
+test('refund restores gift balance once',()=>{const paid=settle(state,a,'gift-demo');const refund=refundPayment(paid,a.id);assert.equal(refund.gifts[0].remaining,100);assert.equal(refund.appointments[0].refunded,true);assert.equal(refundPayment(refund,a.id),refund);});
+test('unknown and exhausted gift codes are rejected without modifying data',()=>{assert.throws(()=>settle(state,a,'unknown'));const expired={...state,gifts:state.gifts.map(g=>({...g,remaining:0}))};assert.throws(()=>settle(expired,a,'gift-demo'));assert.equal(state.gifts[0].remaining,100);});
+test('gift balance cannot cover tips or exceed the service total after discounts',()=>{const paid=settle(state,{...a,tip:20,discount:10},'gift-demo');assert.equal(paid.appointments[0].giftApplied,40);assert.equal(paid.gifts[0].remaining,60);assert.equal(paid.appointments[0].tip,20);});
+test('one technician cannot complete the other leg by recording payment',()=>{const parallel={...a,parallel:{tech:1,service:3}};const s={...state,appointments:[parallel]};const paid=settle(s,parallel,undefined,0);assert.equal(paid.appointments[0].status,'confirmed');assert.deepEqual(paid.appointments[0].finishedTechs,[0]);assert.equal(settle(s,parallel,undefined,2),s);});
+test('invalid discounts and tips are rejected',()=>{assert.throws(()=>settle(state,{...a,discount:999}));assert.throws(()=>settle(state,{...a,tip:-1}));assert.throws(()=>settle(state,{...a,tip:NaN}));});
